@@ -1,18 +1,24 @@
-import styles from './styles.css';
+import styles from './template.css';
 import {template} from './template';
 import AoflElement from '@aofl/web-components/aofl-element';
-import '../aofl-code-element';
+import '@aofl/aofl-samples/aofl-code-element';
 import PreviewContext from './js/preview-context';
 import playSvg from './svgs/play.svg';
 import contrastSvg from './svgs/contrast.svg';
 import codeSvg from './svgs/code.svg';
 import {html} from '@polymer/lit-element';
+import '@aofl/web-components/aofl-drawer';
+import {storeInstance} from '@aofl/store';
+import {tabsSdoEnumerate} from '../tab-element';
+import {mapStatePropertiesMixin} from '@aofl/map-state-properties-mixin';
+import previewSdoEnumerate from './js/preview-sdo';
+
 /**
  * @summary AoflPreviewElement
  * @class AoflPreviewElement
  * @extends {AoflElement}
  */
-class AoflPreviewElement extends AoflElement {
+class AoflPreviewElement extends mapStatePropertiesMixin(AoflElement) {
   /**
    * Creates an instance of AoflPreviewElement.
    * @memberof AoflPreviewElement
@@ -20,10 +26,11 @@ class AoflPreviewElement extends AoflElement {
   constructor() {
     super();
     this.drawerState = false;
-    this.darkmode = false;
+    this.darkMode = false;
     this.playSvg = html([playSvg]);
     this.contrastSvg = html([contrastSvg]);
     this.codeSvg = html([codeSvg]);
+    this.storeInstance = storeInstance;
   }
 
   /**
@@ -32,7 +39,27 @@ class AoflPreviewElement extends AoflElement {
    * @memberof AoflPreviewElement
    */
   connectedCallback() {
+    this.storeInstance.commit({
+      namespace: tabsSdoEnumerate.NAMESPACE,
+      mutationId: tabsSdoEnumerate.ADD_GROUP,
+      payload: {
+        groupId: this['dom-scope'],
+        tabs: {
+          'html-code': true,
+          'css-code': true,
+          'js-code': false
+        }
+      }
+    }, {
+      namespace: previewSdoEnumerate.NAMESPACE,
+      mutationId: previewSdoEnumerate.ADD_PREVIEW,
+      payload: {
+       previewId: this['dom-scope']
+      }
+    });
+
     super.connectedCallback();
+
     this.codeElems = {
       'js-code': this.shadowRoot.querySelector('#js-code'),
       'html-code': this.shadowRoot.querySelector('#html-code'),
@@ -65,8 +92,9 @@ class AoflPreviewElement extends AoflElement {
    */
   static get properties() {
     return {
-      drawerState: Boolean,
-      darkmode: Boolean
+      'dom-scope': String,
+      'drawerState': Boolean,
+      'darkMode': Boolean
     };
   }
 
@@ -77,7 +105,20 @@ class AoflPreviewElement extends AoflElement {
    * @memberof AoflPreviewElement
    */
   _render() {
-    return super._render(template, [window.globalStyles, styles]);
+    return super._render(template, [styles]);
+  }
+
+  /**
+   *
+   *
+   * @memberof AoflPreviewElement
+   */
+  mapStateProperties() {
+    const state = storeInstance.getState();
+    this.selectedTab = state[tabsSdoEnumerate.NAMESPACE][this['dom-scope']].$selected;
+    this.darkMode = state[previewSdoEnumerate.NAMESPACE][this['dom-scope']].darkMode;
+    this.drawerState = state[previewSdoEnumerate.NAMESPACE][this['dom-scope']].drawerState;
+    this.tabChanged();
   }
 
   /**
@@ -86,11 +127,15 @@ class AoflPreviewElement extends AoflElement {
    * @memberof AoflPreviewElement
    */
   toggleCode() {
-    this.drawerState = !this.drawerState;
-    this.renderComplete
-    .then(() => {
-      this.codeElems['html-code'].cm.refresh();
+    this.storeInstance.commit({
+      namespace: previewSdoEnumerate.NAMESPACE,
+      mutationId: previewSdoEnumerate.TOGGLE_DRAWER,
+      payload: {
+        previewId: this['dom-scope']
+      }
     });
+
+    this.tabChanged();
   }
 
   /**
@@ -109,10 +154,9 @@ class AoflPreviewElement extends AoflElement {
    * @param {*} e
    * @memberof AoflPreviewElement
    */
-  tabChanged(e) {
-    let tab = e.target.openTab;
+  tabChanged() {
     this.renderComplete.then(() => {
-      this.codeElems[tab].cm.refresh();
+      this.codeElems[this.selectedTab].cm.refresh();
     });
   }
 
@@ -123,7 +167,13 @@ class AoflPreviewElement extends AoflElement {
    * @memberof AoflPreviewElement
    */
   toggleDarkMode() {
-    this.darkmode = !this.darkmode;
+    this.storeInstance.commit({
+      namespace: previewSdoEnumerate.NAMESPACE,
+      mutationId: previewSdoEnumerate.TOGGLE_DARK_MODE,
+      payload: {
+        previewId: this['dom-scope']
+      }
+    });
   }
 }
 

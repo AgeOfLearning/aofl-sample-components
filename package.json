@@ -13,8 +13,12 @@
   "author": "Arian Khosravi <arian.khosravi@aofl.com>",
   "license": "MIT",
   "dependencies": {
-    "@aofl/web-components": "file:../aofl-examples/node_modules_sourced/@aofl/web-components/web-components",
-    "@polymer/lit-element": "^0.5.2",
-    "codemirror": "^5.39.2"
-  }
+    "@aofl/object-utils": "^1.1.0",
+    "@aofl/router": "^1.0.0",
+    "@aofl/store": "^1.0.1",
+    "@aofl/web-components": "^1.0.0",
+    "@polymer/lit-element": "^0.6.2",
+    "codemirror": "^5.40.2"
+  },
+  "devDependencies": {}
 }

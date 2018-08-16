@@ -1,4 +1,4 @@
-import styles from './styles.css';
+import styles from './template.css';
 import {template} from './template';
 import AoflElement from '@aofl/web-components/aofl-element';
 import codeMirrorStyles from 'codemirror/lib/codemirror.css';
@@ -60,24 +60,10 @@ class AoflCodeElement extends AoflElement {
     }
     this.innerHTML = '';
     this.code = code;
-    // this.code = Array.from(this.childNodes).reduce((acc, item) => {
-    //   if (item instanceof HTMLSlotElement) {
-    //     acc += Array.from(item.assignedNodes()).reduce((slotAcc, slotItem) => {
-    //       slotAcc += slotItem.textContent;
-    //       return slotAcc;
-    //     }, '');
-    //   } else {
-    //     console.log(item);
-    //     acc += item.textContent;
-    //   }
-
-    //   return acc;
-    // }, '');
     super.connectedCallback();
     this.renderComplete
     .then(() => {
       const textArea = this.shadowRoot.querySelector('textarea');
-      console.log('textArea', textArea);
       this.cm = CodeMirror.fromTextArea(textArea, {
         lineNumbers: false,
         indentUnit: 2,
@@ -108,7 +94,7 @@ class AoflCodeElement extends AoflElement {
    * @memberof AoflCodeElement
    */
   _render() {
-    return super._render(template, [window.globalStyles, codeMirrorStyles, monokai, styles]);
+    return super._render(template, [codeMirrorStyles, monokai, styles]);
   }
 }
 

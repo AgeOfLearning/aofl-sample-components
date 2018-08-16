@@ -1,5 +1,5 @@
 export const template = (context, html) => html`
-  <aofl-drawer open$="${context.drawerState}">
+  <aofl-drawer id="mydrawer" open$="${context.drawerState}">
     <slot></slot>
   </aofl-drawer>
 `;

@@ -18,7 +18,9 @@ class PreviewContext {
   constructor(target) {
     let _this = this;
     this.target = target;
-    this.context = new Proxy({}, {
+    this.context = new Proxy({
+      html
+    }, {
       set(target, name, value) {
         target[name] = value;
         _this.render(_this.jsCode, _this.cssCode, _this.templateCode);

@@ -2,9 +2,14 @@
   display: block;
 }
 
+aofl-select-list {
+  display: flex;
+}
+
 ::slotted(aofl-list-option) {
   cursor: pointer;
 }
+
 ::slotted(aofl-list-option[selected="true"]) {
   font-weight: 700;
 }

@@ -7,26 +7,26 @@ export const template = (context, html) => html`
       <button class="button" on-click="${() => context.toggleCode()}">${context.codeSvg}</button>
     </div>
   </header>
-  <div id="preview-panel" class$="${context.darkmode? `dark`: ``}"></div>
+  <div id="preview-panel" class$="${context.darkMode? `dark`: ``}"></div>
   <div style="overflow: hidden">
-    <aofl-drawer open$=${context.drawerState}>
-      <aofl-tabs on-change="${(e) => context.tabChanged(e)}">
-        <div id="tabs" slot="tab">
-          <aofl-list-option class="link" value="html-code" selected="true">HTML</aofl-list-option>
-          <aofl-list-option class="link" value="css-code">CSS</aofl-list-option>
-          <aofl-list-option class="link" value="js-code">JS</aofl-list-option>
-        </div>
-        <aofl-tab-content data-id="html-code">
-          <aofl-code id="html-code" language="htmlmixed" on-update="${() => context.run()}"><slot name="htmlmixed"></slot></aofl-code>
-        </aofl-tab-content>
-        <aofl-tab-content data-id="css-code">
-          <aofl-code id="css-code" language="css" on-update="${() => context.run()}"><slot name="css"></slot></aofl-code>
-        </aofl-tab-content>
-        <aofl-tab-content data-id="js-code">
-          <aofl-code id="js-code" language="javascript" on-update="${() => context.run()}"><slot name="javascript"></slot></aofl-code>
-        </aofl-tab-content>
-    </aofl-tabs>
+    <aofl-drawer open$="${context.drawerState}">
+
+      <tab-headers groupId$="${context['dom-scope']}" on-change="${(e) => context.tabChanged(e)}">
+        <aofl-list-option slot="tab" class="link" value="html-code" selected$="${context.selectedTab === 'html-code'}">HTML</aofl-list-option>
+        <aofl-list-option slot="tab" class="link" value="css-code" selected$="${context.selectedTab === 'css-code'}">CSS</aofl-list-option>
+        <aofl-list-option slot="tab" class="link" value="js-code" selected$="${context.selectedTab === 'js-code'}">JS</aofl-list-option>
+      </tab-headers>
+
+      <tab-content groupId="${context['dom-scope']}" tabId="html-code">
+        <aofl-code id="html-code" language="htmlmixed" on-update="${() => context.run()}"><slot name="htmlmixed"></slot></aofl-code>
+      </tab-content>
+      <tab-content groupId="${context['dom-scope']}" tabId="css-code">
+        <aofl-code id="css-code" language="css" on-update="${() => context.run()}"><slot name="css"></slot></aofl-code>
+      </tab-content>
+      <tab-content groupId="${context['dom-scope']}" tabId="js-code">
+        <aofl-code id="js-code" language="javascript" on-update="${() => context.run()}"><slot name="javascript"></slot></aofl-code>
+      </tab-content>
+
     </aofl-drawer>
   <div>
-
 `;
